@@ -22,6 +22,8 @@ functions:
       - http:
           path: gitWebhookHandler
           method: post
+    environment:
+      BUCKET_NAME: ${self:custom.bucketName}
 
 resources:
   Resources:
