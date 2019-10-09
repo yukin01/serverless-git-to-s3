@@ -1,0 +1,73 @@
+service: git2s3
+frameworkVersion: ">=1.50.0"
+
+custom:
+  defaultBucketName: ${self:service}-${self:provider.stage}-sources
+  bucketName: ${opt:bucketName, self:custom.defaultBucketName}
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  stage: dev
+  runtime: nodejs10.x
+  region: ap-northeast-1
+
+functions:
+  gitWebhookToS3:
+    handler: handler.webhook
+    role: GitWebhookToS3Role
+    events:
+      - http:
+          path: gitWebhookHandler
+          method: get
+
+resources:
+  Resources:
+    GitWebhookSourceBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        AccessControl: Private
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: True
+          BlockPublicPolicy: True
+          IgnorePublicAcls: True
+          RestrictPublicBuckets: True
+        VersioningConfiguration:
+          Status: Enabled
+    GitWebhookToS3Role:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: GitWebhook2s3Role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: GitWebhook2s3Role
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "logs:CreateLogStream"
+                    - "logs:PutLogEvents"
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - "ssm:Get*"
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - "s3:ListBucket"
+                    - "s3:GetObject"
+                    - "s3:PutObject"
+                    - "s3:DeleteObject"
+                  Resource:
+                    - arn:aws:s3:::${self:custom.bucketName}
