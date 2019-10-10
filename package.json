@@ -4,7 +4,8 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --single-quote --no-semi --print-width 120 --write *.ts"
   },
   "dependencies": {
     "aws-sdk": "^2.545.0",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^10.12.18",
+    "prettier": "^1.18.2",
     "serverless": "^1.53.0",
     "serverless-webpack": "^5.2.0",
     "ts-loader": "^5.3.3",
