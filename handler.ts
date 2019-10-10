@@ -33,7 +33,7 @@ const getParametersWithCache = async () => {
   }
   if (!githubAccessToken) {
     const { Parameter } = await ssm
-      .getParameter({ Name: parameterStoreName.githubWebhookSecret, WithDecryption: true })
+      .getParameter({ Name: parameterStoreName.githubAccessToken, WithDecryption: true })
       .promise()
     githubAccessToken = (Parameter && Parameter.Value) || ''
   }
