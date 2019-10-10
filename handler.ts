@@ -65,7 +65,7 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
 
   const signatureBuffer = Buffer.from(event.headers['X-Hub-Signature'])
   const signedBuffer = Buffer.from(
-    'sha1' +
+    'sha1=' +
       crypto
         .createHmac('sha1', githubWebhookSecret)
         .update(event.body)
