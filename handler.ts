@@ -19,7 +19,7 @@ const proxyResult: APIGatewayProxyResult = { statusCode: 200, body: 'exit' }
 const bucketName = process.env.BUCKET_NAME
 const parameterStoreName = {
   githubAccessToken: 'github_access_token',
-  githubWebhookSecret: 'github_webhook_token'
+  githubWebhookSecret: 'github_webhook_secret'
 }
 let githubAccessToken = ''
 let githubWebhookSecret = ''
