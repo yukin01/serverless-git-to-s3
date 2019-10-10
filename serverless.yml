@@ -72,4 +72,4 @@ resources:
                     - "s3:PutObject"
                     - "s3:DeleteObject"
                   Resource:
-                    - arn:aws:s3:::${self:custom.bucketName}
+                    - arn:aws:s3:::${self:custom.bucketName}/*
