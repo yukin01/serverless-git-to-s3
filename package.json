@@ -10,10 +10,12 @@
   "dependencies": {
     "aws-sdk": "^2.545.0",
     "axios": "^0.19.0",
+    "jszip": "^3.2.2",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
+    "@types/jszip": "^3.1.6",
     "@types/node": "^10.12.18",
     "prettier": "^1.18.2",
     "serverless": "^1.53.0",
