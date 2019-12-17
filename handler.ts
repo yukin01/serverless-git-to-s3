@@ -44,7 +44,7 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
   await getParametersWithCache()
 
   if (!event.body || !bucketName) {
-    console.error('[Validation] Error: Webhook payload or environment variables are missing.')
+    console.error('[Error] Validation: Webhook payload or environment variables are missing.')
     return proxyResult
   }
 
@@ -54,15 +54,15 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
   const archiveUrl = payload['repository']['archive_url']
 
   // Extract only tag push event
-  console.log(`[Validation] Log: ref '${ref}'`)
+  console.log(`[Info] Git ref: '${ref}'`)
   if (!ref.includes('tags')) {
-    console.log('[Validation] Skipped: This push event has no tags.')
+    console.log('[Info] Skipped: This push event has no tags.')
     return proxyResult
   }
 
   // Verify github webhook secret
   if (!githubWebhookSecret) {
-    console.error('[Validation] Error: GitHub webhook secret is missing.')
+    console.error('[Error] Validation: GitHub webhook secret is missing.')
     return proxyResult
   }
   const signatureBuffer = Buffer.from(event.headers['X-Hub-Signature'])
@@ -75,13 +75,13 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
   )
   const verified = crypto.timingSafeEqual(signatureBuffer, signedBuffer)
   if (!verified) {
-    console.error('[Validation] Error: GitHub webhook secret is invalid.')
+    console.error('[Error] Validation: GitHub webhook secret is invalid.')
     return proxyResult
   }
 
   // Download source zip from archive link
   if (!githubAccessToken) {
-    console.error('[Validation] Error: GitHub Access Token is missing.')
+    console.error('[Error] Validation: GitHub Access Token is missing.')
     return proxyResult
   }
   const url = archiveUrl.replace('{archive_format}', 'zipball').replace('{/ref}', ref)
@@ -90,7 +90,7 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
     responseType: 'arraybuffer'
   }
   const { status, data } = await axios.get<Buffer>(url, config)
-  console.log(`[Download zip file] Log: status code ${status}`)
+  console.log(`[Info] Download zip file: Status code is ${status}`)
   if (status !== 200) {
     return proxyResult
   }
@@ -116,7 +116,7 @@ export const webhook: APIGatewayProxyHandler = async (event, _context) => {
   // Upload zip to S3
   const uploadFileName = `${repoName}.zip`
   const { Bucket, Key } = await s3.upload({ Bucket: bucketName, Key: uploadFileName, Body: newBuffer }).promise()
-  console.log(`[Upload zip to S3] Success: Bucket '${Bucket}', Key '${Key}'`)
+  console.log(`[Info] Upload zip to S3: Bucket '${Bucket}', Key '${Key}'`)
 
   return proxyResult
 }
